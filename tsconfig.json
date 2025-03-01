@@ -8,25 +8,32 @@
     "baseUrl": "./",
     "paths": {
       "@assets/*": [
-        "src/assets/*"
+        "src/assets/*",
+        "./assets/*"
       ],
       "@components/*": [
-        "src/components/*"
+        "src/components/*",
+        "./components/*"
       ],
       "@screens/*": [
-        "src/screens/*"
+        "src/screens/*",
+        "./screens/*"
       ],
       "@hooks/*": [
-        "src/hooks/*"
+        "src/hooks/*",
+        "./hooks/*"
       ],
       "@contexts/*": [
-        "src/contexts/*"
+        "src/contexts/*",
+        "./contexts/*"
       ],
       "@navigation/*": [
-        "src/navigation/*"
+        "src/navigation/*",
+        "./navigation/*"
       ],
       "@services/*": [
-        "src/services/*"
+        "src/services/*",
+        "./services/*"
       ]
     }
   },
