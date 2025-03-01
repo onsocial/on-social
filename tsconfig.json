@@ -1,6 +1,17 @@
 {
   "extends": "expo/tsconfig.base",
   "compilerOptions": {
-    "strict": true
-  }
+    "strict": true,
+    "jsx": "react-native",
+    "target": "esnext",
+    "moduleResolution": "node",
+    "skipLibCheck": true
+  },
+  "include": [
+    "src/**/*",
+    "App.tsx",
+    "index.ts",
+    "nativewind-env.d.ts"  // Add this line to explicitly include nativewind-env.d.ts
+  ],
+  "exclude": ["node_modules"]
 }
