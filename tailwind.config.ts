@@ -1,5 +1,6 @@
-/** @type {import('tailwindcss').Config} */
-module.exports = {
+import { Config } from 'tailwindcss';
+
+const config: Config = {
   content: [
     './App.tsx',
     './index.ts',
@@ -13,7 +14,21 @@ module.exports = {
   ],
   presets: [require('nativewind/preset')],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        light: {
+          background: '#ffffff',
+          text: '#20252b',
+        },
+        dark: {
+          background: '#20252b',
+          text: '#ffffff',
+        },
+      },
+    },
   },
+  darkMode: 'class', // Enable dark mode using class-based approach
   plugins: [],
 };
+
+export default config;
