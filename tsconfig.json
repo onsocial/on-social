@@ -7,44 +7,16 @@
     "skipLibCheck": true,
     "baseUrl": "./",
     "paths": {
-      "@assets/*": [
-        "src/assets/*",
-        "./assets/*"
-      ],
-      "@components/*": [
-        "src/components/*",
-        "./components/*"
-      ],
-      "@screens/*": [
-        "src/screens/*",
-        "./screens/*"
-      ],
-      "@hooks/*": [
-        "src/hooks/*",
-        "./hooks/*"
-      ],
-      "@contexts/*": [
-        "src/contexts/*",
-        "./contexts/*"
-      ],
-      "@navigation/*": [
-        "src/navigation/*",
-        "./navigation/*"
-      ],
-      "@services/*": [
-        "src/services/*",
-        "./services/*"
-      ]
+      "@assets/*": ["src/assets/*", "./assets/*"],
+      "@components/*": ["src/components/*", "./components/*"],
+      "@screens/*": ["src/screens/*", "./screens/*"],
+      "@hooks/*": ["src/hooks/*", "./hooks/*"],
+      "@contexts/*": ["src/contexts/*", "./contexts/*"],
+      "@navigation/*": ["src/navigation/*", "./navigation/*"],
+      "@services/*": ["src/services/*", "./services/*"]
     }
   },
-  "include": [
-    "src/**/*",
-    "App.tsx",
-    "index.ts",
-    "nativewind-env.d.ts"
-  ],
-  "exclude": [
-    "node_modules"
-  ],
+  "include": ["src/**/*", "App.tsx", "index.ts", "nativewind-env.d.ts"],
+  "exclude": ["node_modules"],
   "extends": "expo/tsconfig.base"
 }
