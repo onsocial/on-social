@@ -7,7 +7,6 @@ defaultConfig.resolver = {
   ...defaultConfig.resolver,
   sourceExts: [...defaultConfig.resolver.sourceExts, 'css'], // Ensure Metro can handle .css files
   alias: {
-    '@App': './App',
     '@assets/*': './src/assets/**',
     '@components/*': './src/components/**',
     '@screens/*': './src/screens/**',
@@ -15,9 +14,11 @@ defaultConfig.resolver = {
     '@contexts/*': './src/contexts/**',
     '@navigation/*': './src/navigation/**',
     '@services/*': './src/services/**',
+    '@styles/*': './src/styles/**',
+    '@utils/*': './src/utils/**',
   },
 };
 
 module.exports = withNativeWind(defaultConfig, {
-  input: './src/assets/global.css',
+  input: './src/styles/global.css',
 });

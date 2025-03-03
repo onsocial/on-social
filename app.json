@@ -4,6 +4,7 @@
     "slug": "on-social",
     "version": "1.0.0",
     "orientation": "portrait",
+    "scheme": "your-app-scheme",
     "icon": "./src/assets/icon.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
@@ -24,6 +25,7 @@
     "web": {
       "favicon": "./src/assets/favicon.png",
       "bundler": "metro"
-    }
+    },
+    "plugins": ["expo-font", "expo-router"]
   }
 }

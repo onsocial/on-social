@@ -1,0 +1,40 @@
+/* global.css */
+
+/* Import Tailwind's base, components, and utilities */
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+body {
+  font-family: 'PublicSans', sans-serif;
+}
+
+/* Optional: Define any custom global styles for transitions, etc. */
+
+/* Apply transitions to body for smooth theme switching */
+body {
+  transition:
+    background-color 0.5s ease,
+    color 0.5s ease; /* Adjust transition duration */
+  margin: 0; /* Ensure no margin around the body */
+  padding: 0; /* Ensure no padding around the body */
+  width: 100vw; /* Ensure the body covers the entire viewport width */
+  height: 100vh; /* Ensure the body covers the entire viewport height */
+  display: flex; /* Use flexbox to center content */
+  align-items: center; /* Center content vertically */
+  justify-content: center; /* Center content horizontally */
+}
+
+/* Light mode styles (by default) */
+body {
+  background-color: #ffffff;
+  color: #20252b;
+}
+
+/* Dark mode styles: when the `dark` class is added to the body */
+body.dark {
+  background-color: #20252b;
+  color: #ffffff;
+}
+
+/* Optional: You can customize additional global styles as needed */
