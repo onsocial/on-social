@@ -7,16 +7,16 @@
     "skipLibCheck": true,
     "baseUrl": "./",
     "paths": {
-      "@assets/*": ["src/assets/*"],
-      "@components/*": ["src/components/*"],
-      "@screens/*": ["src/screens/*"],
-      "@hooks/*": ["src/hooks/*"],
-      "@contexts/*": ["src/contexts/*"],
-      "@navigation/*": ["src/navigation/*"],
-      "@services/*": ["src/services/*"],
-      "@styles/*": ["src/styles/*"],
-      "@utils/*": ["src/utils/*"],
-      "@app/*": ["src/app/*"]
+      "@assets/*": ["src/assets/*", "./assets/*"],
+      "@components/*": ["src/components/*", "./components/*"],
+      "@screens/*": ["src/screens/*", "./screens/*"],
+      "@hooks/*": ["src/hooks/*", "./hooks/*"],
+      "@contexts/*": ["src/contexts/*", "./contexts/*"],
+      "@navigation/*": ["src/navigation/*", "./navigation/*"],
+      "@services/*": ["src/services/*", "./services/*"],
+      "@styles/*": ["src/styles/*", "./styles/*"],
+      "@utils/*": ["src/utils/*", "./utils/*"],
+      "@app/*": ["src/app/*", "./app/*"]
     }
   },
   "include": ["src/**/*", "app/**/*", "nativewind-env.d.ts"],
