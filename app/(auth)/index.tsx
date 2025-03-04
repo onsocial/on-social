@@ -13,9 +13,7 @@ export default function AuthScreen() {
         className="rounded-lg bg-blue-500 px-5 py-3"
         onPress={() => router.replace('/(app)')}
       >
-        <Text className="text-lg font-semibold text-white">
-          Let's connect
-        </Text>
+        <Text className="text-lg font-semibold text-white">Let's connect</Text>
       </TouchableOpacity>
     </View>
   );

@@ -27,7 +27,6 @@ const config: Config = {
           text: '#ffffff',
         },
       },
-      
     },
   },
   darkMode: 'class', // Enable dark mode using class-based approach
