@@ -1,5 +1,11 @@
 import React from 'react';
-import { Text, View, TouchableOpacity, ActivityIndicator, Platform } from 'react-native';
+import {
+  Text,
+  View,
+  TouchableOpacity,
+  ActivityIndicator,
+  Platform,
+} from 'react-native';
 import clsx from 'clsx';
 
 interface ButtonProps {
@@ -75,22 +81,31 @@ export const Button: React.FC<ButtonProps> = ({
       disabled={disabled || loading}
       activeOpacity={0.9}
       accessibilityRole="button"
-      className={clsx(baseStyles, variants[variant], sizes[size], hoverStyle, className, {
-        'opacity-50': disabled || loading,
-      })}
+      className={clsx(
+        baseStyles,
+        variants[variant],
+        sizes[size],
+        hoverStyle,
+        className,
+        {
+          'opacity-50': disabled || loading,
+        },
+      )}
     >
       <View className="flex-row items-center justify-center">
         {loading ? (
-          <ActivityIndicator 
-            size={spinnerSizes[size]} 
-            color="grey" 
-            className="mr-2" 
+          <ActivityIndicator
+            size={spinnerSizes[size]}
+            color="grey"
+            className="mr-2"
           />
         ) : icon ? (
           <View className="mr-2">{icon}</View>
         ) : null}
         {children && (
-          <Text className={clsx('text-inherit', textSizes[size], textClassName)}>
+          <Text
+            className={clsx('text-inherit', textSizes[size], textClassName)}
+          >
             {children}
           </Text>
         )}

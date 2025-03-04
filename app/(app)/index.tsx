@@ -6,15 +6,15 @@ import '@styles/global.css';
 export default function HomePage() {
   return (
     <View className="flex-1 items-center justify-center bg-light-background dark:bg-dark-background">
-     <Button
+      <Button
         variant="primary"
         size="md"
         className="mt-5"
-        loading = "true"
+        loading="true"
         textClassName="font-semibold" // Apply semibold text using Tailwind
         onClick={() => router.replace('/(app)')}
       >
-       Under construction
+        Under construction
       </Button>
     </View>
   );
