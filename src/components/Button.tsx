@@ -17,7 +17,7 @@ interface ButtonProps {
   loading?: boolean;
   icon?: React.ReactNode;
   className?: string;
-  textClassName?: string; // New prop for text-specific Tailwind classes
+  textClassName?: string;
   type?: 'button' | 'submit' | 'reset';
 }
 
@@ -30,7 +30,7 @@ export const Button: React.FC<ButtonProps> = ({
   loading = false,
   icon,
   className = '',
-  textClassName = '', // Default empty string
+  textClassName = '',
   type = 'button',
 }) => {
   const baseStyles = 'rounded-full font-bold flex items-center justify-center';
@@ -48,9 +48,23 @@ export const Button: React.FC<ButtonProps> = ({
   };
 
   const sizes = {
-    sm: 'px-3 py-1 text-sm',
+    sm: 'px-3 py-1',
     md: 'px-4 py-2',
-    lg: 'px-5 py-3 text-lg',
+    lg: 'px-5 py-3',
+  };
+
+  // Define text sizes explicitly
+  const textSizes = {
+    sm: 'text-sm',
+    md: 'text-base',
+    lg: 'text-lg',
+  };
+
+  // Map button size to spinner size
+  const spinnerSizes = {
+    sm: 'small',
+    md: 'small',
+    lg: 'large',
   };
 
   const hoverStyle = Platform.OS === 'web' ? 'hover:opacity-80' : '';
@@ -67,12 +81,16 @@ export const Button: React.FC<ButtonProps> = ({
     >
       <View className="flex-row items-center justify-center">
         {loading ? (
-          <ActivityIndicator size="small" color="grey" className="mr-2" />
+          <ActivityIndicator 
+            size={spinnerSizes[size]} 
+            color="grey" 
+            className="mr-2" 
+          />
         ) : icon ? (
           <View className="mr-2">{icon}</View>
         ) : null}
         {children && (
-          <Text className={clsx('text-inherit', textClassName)}>
+          <Text className={clsx('text-inherit', textSizes[size], textClassName)}>
             {children}
           </Text>
         )}
