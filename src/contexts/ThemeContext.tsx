@@ -20,21 +20,41 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({
   // Load theme from AsyncStorage when the app starts
   useEffect(() => {
     const loadTheme = async () => {
-      const storedTheme = await AsyncStorage.getItem('theme');
-      if (storedTheme && (storedTheme === 'light' || storedTheme === 'dark')) {
-        setTheme(storedTheme);
-      } else {
-        const systemTheme = Appearance.getColorScheme();
-        setTheme(systemTheme || 'light');
+      try {
+        const storedTheme = await AsyncStorage.getItem('theme');
+        if (storedTheme === 'light' || storedTheme === 'dark') {
+          setTheme(storedTheme);
+        } else {
+          const systemTheme = Appearance.getColorScheme();
+          setTheme(systemTheme || 'light');
+        }
+      } catch (error) {
+        console.error('Failed to load theme from AsyncStorage:', error);
+        setTheme('light'); // Fallback to light theme
       }
     };
 
     loadTheme();
+
+    // Listen for system theme changes
+    const subscription = Appearance.addChangeListener(({ colorScheme }) => {
+      setTheme(colorScheme || 'light');
+    });
+
+    return () => subscription.remove();
   }, []);
 
   // Save the selected theme to AsyncStorage whenever it changes
   useEffect(() => {
-    AsyncStorage.setItem('theme', theme);
+    const saveTheme = async () => {
+      try {
+        await AsyncStorage.setItem('theme', theme);
+      } catch (error) {
+        console.error('Failed to save theme to AsyncStorage:', error);
+      }
+    };
+
+    saveTheme();
   }, [theme]);
 
   // Toggle between light and dark themes

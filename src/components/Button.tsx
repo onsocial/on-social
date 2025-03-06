@@ -5,12 +5,13 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   Platform,
+  GestureResponderEvent,
 } from 'react-native';
 import clsx from 'clsx';
 
 interface ButtonProps {
   children?: React.ReactNode;
-  onClick?: () => void;
+  onClick?: (event: GestureResponderEvent) => void;
   variant?:
     | 'primary'
     | 'secondary'
@@ -59,15 +60,13 @@ export const Button: React.FC<ButtonProps> = ({
     lg: 'px-5 py-3',
   };
 
-  // Define text sizes explicitly
   const textSizes = {
     sm: 'text-sm',
     md: 'text-base',
     lg: 'text-lg',
   };
 
-  // Map button size to spinner size
-  const spinnerSizes = {
+  const spinnerSizes: { [key: string]: 'small' | 'large' } = {
     sm: 'small',
     md: 'small',
     lg: 'large',
@@ -93,15 +92,16 @@ export const Button: React.FC<ButtonProps> = ({
       )}
     >
       <View className="flex-row items-center justify-center">
+        {/* Show loading spinner only when loading */}
         {loading ? (
           <ActivityIndicator
             size={spinnerSizes[size]}
             color="grey"
             className="mr-2"
           />
-        ) : icon ? (
-          <View className="mr-2">{icon}</View>
-        ) : null}
+        ) : (
+          icon && <View className="mr-2">{icon}</View> // Only show icon if not loading
+        )}
         {children && (
           <Text
             className={clsx('text-inherit', textSizes[size], textClassName)}
