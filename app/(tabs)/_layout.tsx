@@ -23,8 +23,10 @@ export default function TabLayout() {
         tabBarStyle: {
           backgroundColor, // Background of the tab bar
           borderTopColor: backgroundColor, // Avoid unwanted borders
-          height: 60, // Ensure sufficient height for visibility
-          paddingBottom: 5, // Add padding for better touch area
+          height: 60, // Increase height for better visibility on mobile
+          position: 'absolute', // Ensure tabs are at the bottom
+          bottom: 0, // Align tabs to the bottom of the screen
+          width: '100%', // Full width of the screen
         },
         tabBarActiveTintColor: textColor, // Color of active tab label/icon
         tabBarInactiveTintColor: inactiveColor, // Color of inactive tab label/icon
