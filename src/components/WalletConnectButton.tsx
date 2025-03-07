@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { View, Alert } from 'react-native';
-import { useWallet } from '@contexts/WalletContext';
-import { Button } from '@components/Button';
-import { StarCIconFilled } from '@assets/icons';
+import { useWallet } from '../contexts/WalletContext';
+import { Button } from '@components/Button'; // Assuming a custom Button component
+import { StarCIconFilled } from '@assets/icons'; // Adjusted path
 
 const WalletConnectButton = () => {
   const { isConnecting, connectWallet } = useWallet();
@@ -13,10 +13,9 @@ const WalletConnectButton = () => {
     try {
       await connectWallet();
     } catch (error: any) {
-      Alert.alert(
-        'Error',
-        'Failed to connect wallet: ' + (error.message || 'Unknown error'),
-      );
+      Alert.alert('Error', `Failed to connect wallet: ${error.message || 'Unknown error'}`);
+    } finally {
+      setLoading(false);
     }
   };
 

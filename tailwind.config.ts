@@ -13,6 +13,7 @@ const config: Config = {
     './src/assets/**/*.{js,jsx,ts,tsx,mdx}',
     './src/utils/**/*.{js,jsx,ts,tsx,mdx}',
     './src/styles/**/*.{js,jsx,ts,tsx,mdx}',
+    './src/server/**/*.{js,jsx,ts,tsx,mdx}',
   ],
   presets: [require('nativewind/preset')],
   theme: {
@@ -21,16 +22,17 @@ const config: Config = {
         light: {
           background: '#ffffff',
           text: '#20252b',
+          inactive: '#cccccc', 
         },
         dark: {
           background: '#20252b',
           text: '#ffffff',
+          inactive: '#888888',
         },
       },
     },
   },
-  darkMode: 'class', // Enable dark mode using class-based approach
-  plugins: [],
+  darkMode: 'class', 
 };
 
 export default config;

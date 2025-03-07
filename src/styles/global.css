@@ -37,4 +37,13 @@ body.dark {
   color: #ffffff;
 }
 
+/* Inactive color styles */
+.text-light-inactive {
+  color: #cccccc;
+}
+
+.text-dark-inactive {
+  color: #888888;
+}
+
 /* Optional: You can customize additional global styles as needed */

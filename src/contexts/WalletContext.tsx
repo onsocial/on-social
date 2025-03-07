@@ -1,7 +1,7 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
-import { WalletSelector, Wallet } from "@near-wallet-selector/core";
-import { initializeWalletSelector } from "@utils/wallet";
-import { useRouter } from "expo-router";
+import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { WalletSelector, Wallet } from '@near-wallet-selector/core';
+import { initializeWalletSelector } from '../utils/wallet';
+import { useRouter } from 'expo-router';
 
 interface WalletContextType {
   selector: WalletSelector | null;
@@ -10,7 +10,7 @@ interface WalletContextType {
   setAccountId: (id: string | null) => void;
   isConnecting: boolean;
   isDisconnecting: boolean;
-  connectWallet: () => Promise<void>;
+  connectWallet: () => Promise<Wallet | null>;
   disconnectWallet: () => Promise<void>;
 }
 
@@ -25,7 +25,7 @@ export const WalletProvider = ({ children }: { children: ReactNode }) => {
   const router = useRouter();
 
   useEffect(() => {
-    console.log("WalletProvider initializing");
+    console.log('WalletProvider initializing');
     initializeWalletSelector()
       .then(async (sel) => {
         setSelector(sel);
@@ -34,35 +34,34 @@ export const WalletProvider = ({ children }: { children: ReactNode }) => {
           setWallet(w);
           const accounts = await w.getAccounts();
           setAccountId(accounts[0]?.accountId || null);
-          console.log("Wallet initialized with account:", accounts[0]?.accountId);
-          router.replace("/(tabs)/home");
+          console.log('Wallet initialized with account:', accounts[0]?.accountId);
+          router.replace('/(tabs)/home');
         }
       })
-      .catch((error) => console.error("Failed to initialize wallet:", error));
+      .catch((error) => console.error('Failed to initialize wallet:', error));
   }, [router]);
 
   const connectWallet = async () => {
-    if (!selector || isConnecting) return;
+    if (!selector || isConnecting) return null;
     setIsConnecting(true);
     try {
-      const walletInstance = await selector.wallet("bitte-wallet");
-      console.log("Requesting sign-in for social.near (set in setupBitteWallet)");
+      const walletInstance = await selector.wallet('bitte-wallet');
       await walletInstance.signIn({
         contractId: 'social.near',
         methodNames: [],
-        accounts: [],
+        accounts: [], // Added to satisfy HardwareWalletSignInParams
       });
       setWallet(walletInstance);
       const accounts = await walletInstance.getAccounts();
-      console.log("Connected accounts:", accounts);
       setAccountId(accounts[0]?.accountId || null);
-      console.log("Wallet connected:", accounts[0]?.accountId);
-      setIsConnecting(false);
-      router.replace("/(tabs)/home"); // Explicit redirect
+      console.log('Wallet connected:', accounts[0]?.accountId);
+      router.replace('/(tabs)/home');
+      return walletInstance;
     } catch (error: any) {
-      console.error("Wallet connection failed:", error);
-      setIsConnecting(false);
+      console.error('Wallet connection failed:', error);
       throw error;
+    } finally {
+      setIsConnecting(false);
     }
   };
 
@@ -73,15 +72,14 @@ export const WalletProvider = ({ children }: { children: ReactNode }) => {
       await wallet.signOut();
       setWallet(null);
       setAccountId(null);
-      setIsDisconnecting(false);
-      router.replace("/");
-      console.log("Wallet disconnected and redirected to /");
+      router.replace('/');
+      console.log('Wallet disconnected');
     } catch (error: any) {
-      console.error("Disconnect failed:", error);
-      setIsDisconnecting(false);
-      setAccountId(null);
-      router.replace("/");
+      console.error('Disconnect failed:', error);
+      router.replace('/');
       throw error;
+    } finally {
+      setIsDisconnecting(false);
     }
   };
 
@@ -101,6 +99,6 @@ export const WalletProvider = ({ children }: { children: ReactNode }) => {
 
 export const useWallet = () => {
   const context = useContext(WalletContext);
-  if (!context) throw new Error("useWallet must be used within WalletProvider");
+  if (!context) throw new Error('useWallet must be used within WalletProvider');
   return context;
 };

@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "strict": true,
+    "types": ["node"],
     "jsx": "react-native",
     "allowJs": true,
     "esModuleInterop": true,
@@ -18,10 +19,11 @@
       "@services/*": ["src/services/*", "./services/*"],
       "@styles/*": ["src/styles/*", "./styles/*"],
       "@utils/*": ["src/utils/*", "./utils/*"],
-      "@app/*": ["src/app/*", "./app/*"]
+      "@app/*": ["src/app/*", "./app/*"],
+      "@server/*": ["src/server/*", "./server/*"]
     }
   },
-  "include": ["src/**/*", "app/**/*", "nativewind-env.d.ts"],
+  "include": ["src/**/*", "app/**/*", "nativewind-env.d.ts", "testRpc.ts"],
   "exclude": ["node_modules"],
   "extends": "expo/tsconfig.base"
 }

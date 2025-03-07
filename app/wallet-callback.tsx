@@ -1,32 +1,56 @@
-import { useEffect } from "react";
-import { Text, View } from "react-native";
-import { useRouter, useLocalSearchParams } from "expo-router";
-import * as Linking from "expo-linking";
-import { useWallet } from "@contexts/WalletContext";
+import React, { useEffect, useRef } from 'react';
+import { Text, View } from 'react-native';
+import { useRouter, useLocalSearchParams } from 'expo-router';
+import { useWallet } from '@contexts/WalletContext';
+import { useTransaction } from '@contexts/TransactionContext';
 
-export default function WalletCallback() {
+const WalletCallback: React.FC = () => {
   const router = useRouter();
   const params = useLocalSearchParams();
   const { setAccountId } = useWallet();
+  const { getTransactionOrigin, clearTransactionOrigin } = useTransaction();
+  const isMounted = useRef<boolean>(false);
 
   useEffect(() => {
-    const { account_id, all_keys, contract_id } = params;
-    console.log("WalletCallback useEffect, params:", JSON.stringify(params, null, 2));
-    if (account_id) {
-      console.log("User signed in with account:", account_id);
-      if (contract_id) console.log("Contract ID from callback:", contract_id);
-      setAccountId(account_id as string);
-      router.replace("/(tabs)/home");
-    } else {
-      console.log("No account_id found, redirecting to /");
-      router.replace("/");
-    }
-  }, [params, router, setAccountId]);
+    isMounted.current = true;
 
-  console.log("Rendering WalletCallback");
+    const handleCallback = () => {
+      const { account_id, transactionHashes } = params as { account_id?: string; transactionHashes?: string };
+      const { originRoute } = getTransactionOrigin();
+
+      console.log('WalletCallback params:', JSON.stringify(params, null, 2));
+      if (account_id && isMounted.current) {
+        console.log('User signed in with account:', account_id);
+        setAccountId(account_id);
+        router.replace('/(tabs)/home');
+      } else if (transactionHashes && isMounted.current) {
+        console.log('Transaction completed:', transactionHashes);
+        const redirectRoute = originRoute || '/(tabs)/home'; // Default to home if no origin
+        router.replace(redirectRoute);
+        clearTransactionOrigin();
+      } else if (isMounted.current) {
+        console.log('No account_id or transactionHashes, redirecting to /');
+        router.replace('/');
+      }
+    };
+
+    const timer = setTimeout(() => {
+      if (isMounted.current) {
+        handleCallback();
+      }
+    }, 100);
+
+    return () => {
+      clearTimeout(timer);
+      isMounted.current = false;
+    };
+  }, [params, router, setAccountId, getTransactionOrigin, clearTransactionOrigin]);
+
   return (
-    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-      <Text>Processing wallet connection...</Text>
+    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+      <Text>Processing wallet callback...</Text>
     </View>
   );
-}
+};
+
+export default WalletCallback;
