@@ -59,7 +59,7 @@ const TipScreen: React.FC = () => {
       console.log(`Sending ${amount} NEAR to ${recipient}`);
       console.log('Transaction params:', { receiverId: recipient, deposit: nearAmount });
 
-      const callbackUrl = `${window.location.origin}/wallet-callback`;
+      const callbackUrl = Platform.OS === 'web' ? `${window.location.origin}/wallet-callback` : 'onsocial://wallet-callback';
       const walletInstance = await selector.wallet('bitte-wallet');
 
       // Set transaction origin before redirect
@@ -73,6 +73,7 @@ const TipScreen: React.FC = () => {
             params: { deposit: nearAmount },
           },
         ],
+        // @ts-ignore: Ignore the TypeScript error for callbackUrl
         callbackUrl,
       } as any);
 

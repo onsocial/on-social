@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { initializeWalletSelector } from '@utils/wallet';
 import { WalletSelector, Wallet } from '@near-wallet-selector/core';
 import { useRouter } from 'expo-router';
+import { Platform } from 'react-native';
 
 export function useWallet() {
   const [selector, setSelector] = useState<WalletSelector | null>(null);
@@ -36,10 +37,13 @@ export function useWallet() {
     setIsConnecting(true);
     try {
       const walletInstance = await selector.wallet('bitte-wallet');
+      const callbackUrl = Platform.OS === 'web' ? `${window.location.origin}/wallet-callback` : 'onsocial://wallet-callback';
       await walletInstance.signIn({
         contractId: 'social.near',
         methodNames: [],
         accounts: [],
+        // @ts-ignore: Ignore the TypeScript error for callbackUrl
+        callbackUrl,
       });
       setWallet(walletInstance);
       const accounts = await walletInstance.getAccounts();
