@@ -1,7 +1,9 @@
+// app/(tabs)/_layout.tsx
 import { Tabs } from 'expo-router';
 import { useContext } from 'react';
 import { useWallet } from '@contexts/WalletContext';
 import { ThemeContext } from '@contexts/ThemeContext';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function TabLayout() {
   const { accountId } = useWallet();
@@ -18,31 +20,30 @@ export default function TabLayout() {
   const inactiveColor = theme === 'dark' ? '#888888' : '#cccccc';
 
   return (
-    <Tabs
-      screenOptions={{
-        tabBarStyle: {
-          backgroundColor, // Background of the tab bar
-          borderTopColor: backgroundColor, // Avoid unwanted borders
-          height: 60, // Increase height for better visibility on mobile
-          position: 'absolute', // Ensure tabs are at the bottom
-          bottom: 0, // Align tabs to the bottom of the screen
-          width: '100%', // Full width of the screen
-        },
-        tabBarActiveTintColor: textColor, // Color of active tab label/icon
-        tabBarInactiveTintColor: inactiveColor, // Color of inactive tab label/icon
-        headerStyle: {
-          backgroundColor, // Header background
-        },
-        headerTintColor: textColor, // Header text/icon color
-        tabBarLabelStyle: {
-          fontSize: 12, // Ensure label text is readable
-          marginBottom: 5,
-        },
-      }}
-    >
-      <Tabs.Screen name="home" options={{ title: 'Home' }} />
-      <Tabs.Screen name="profile" options={{ title: 'Profile' }} />
-      <Tabs.Screen name="tip" options={{ title: 'Tip' }} />
-    </Tabs>
+    <SafeAreaView style={{ flex: 1 }}>
+      <Tabs
+        screenOptions={{
+          tabBarStyle: {
+            backgroundColor, // Background of the tab bar
+            borderBottomColor: backgroundColor, // Avoid unwanted borders
+            height: 60, // Increase height for better visibility on mobile
+            position: 'absolute', // Ensure tabs are at the top
+            top: 0, // Align tabs to the top of the screen
+            width: '100%', // Full width of the screen
+          },
+          tabBarActiveTintColor: textColor, // Color of active tab label/icon
+          tabBarInactiveTintColor: inactiveColor, // Color of inactive tab label/icon
+          headerShown: false, // Remove the top bar
+          tabBarLabelStyle: {
+            fontSize: 12, // Ensure label text is readable
+            marginTop: 5,
+          },
+        }}
+      >
+        <Tabs.Screen name="home" options={{ title: 'Home' }} />
+        <Tabs.Screen name="profile" options={{ title: 'Profile' }} />
+        <Tabs.Screen name="tip" options={{ title: 'Tip' }} />
+      </Tabs>
+    </SafeAreaView>
   );
 }
