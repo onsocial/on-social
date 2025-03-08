@@ -14,6 +14,7 @@ const config: Config = {
     './src/utils/**/*.{js,jsx,ts,tsx,mdx}',
     './src/styles/**/*.{js,jsx,ts,tsx,mdx}',
     './src/server/**/*.{js,jsx,ts,tsx,mdx}',
+    './src/store/**/*.{js,jsx,ts,tsx,mdx}',
   ],
   presets: [require('nativewind/preset')],
   theme: {

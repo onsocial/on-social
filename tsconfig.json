@@ -20,7 +20,8 @@
       "@styles/*": ["src/styles/*", "./styles/*"],
       "@utils/*": ["src/utils/*", "./utils/*"],
       "@app/*": ["src/app/*", "./app/*"],
-      "@server/*": ["src/server/*", "./server/*"]
+      "@server/*": ["src/server/*", "./server/*"],
+      "@store/*": ["src/store/*", "./store/*"]
     }
   },
   "include": ["src/**/*", "app/**/*", "nativewind-env.d.ts", "testRpc.ts"],
