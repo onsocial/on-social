@@ -1,78 +1,97 @@
-import { useState, useEffect } from 'react';
-import { initializeWalletSelector } from '@utils/wallet';
-import { WalletSelector, Wallet } from '@near-wallet-selector/core';
+import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { setWallet, setAccountId, setSelector } from '@store/slices/walletSlice';
+import { WalletSelector, setupWalletSelector } from '@near-wallet-selector/core';  // Ensure correct import
 import { useRouter } from 'expo-router';
-import { Platform } from 'react-native';
+import { RootState } from '@store/index';  // Import RootState for proper state typing
+import { useTransaction } from '@contexts/TransactionContext';  // Import your custom TransactionContext
+
+// Initialize wallet logic
+async function initializeWallet(): Promise<WalletSelector | undefined> {
+  try {
+    const selector = await setupWalletSelector({
+      network: 'mainnet',  // Specify the network
+      modules: [/* your wallet modules */],  // Add your wallet modules
+    });
+
+    if (!selector) {
+      return undefined;
+    }
+    return selector;
+  } catch (error) {
+    console.error('Error initializing wallet:', error);
+    return undefined;
+  }
+}
 
 export function useWallet() {
-  const [selector, setSelector] = useState<WalletSelector | null>(null);
-  const [wallet, setWallet] = useState<Wallet | null>(null);
-  const [accountId, setAccountId] = useState<string | null>(null);
   const [isConnecting, setIsConnecting] = useState(false);
-  const [isDisconnecting, setIsDisconnecting] = useState(false);
+  const dispatch = useDispatch();
   const router = useRouter();
+  const { setTransactionOrigin, getTransactionOrigin } = useTransaction();  // Using Transaction Context
+
+  const { selector, wallet, accountId } = useSelector((state: RootState) => state);
 
   useEffect(() => {
-    console.log('useWallet initializing');
-    initializeWalletSelector()
-      .then(async (sel) => {
-        setSelector(sel);
-        if (sel.isSignedIn()) {
-          const w = await sel.wallet();
-          setWallet(w);
-          const accounts = await w.getAccounts();
-          setAccountId(accounts[0]?.accountId || null);
-          console.log(
-            'Wallet initialized with account:',
-            accounts[0]?.accountId,
-          );
-          router.replace('/home');
-        }
-      })
-      .catch((error) => console.error('Failed to initialize wallet:', error));
-  }, []);
+    const initialize = async () => {
+      const sel = await initializeWallet();
+
+      if (!sel) return;
+
+      dispatch(setSelector(sel));
+
+      if (sel && sel.isSignedIn()) {
+        const w = await sel.wallet();
+        dispatch(setWallet(w));
+        const accounts = await w.getAccounts();
+        dispatch(setAccountId(accounts[0]?.accountId || null));
+        router.replace('/home');
+      }
+    };
+
+    initialize();
+  }, [dispatch, selector, wallet, accountId, router]);
 
   const connectWallet = async () => {
-    if (!selector || isConnecting) return;
+    if (isConnecting || !selector) return;
+
     setIsConnecting(true);
+
     try {
       const walletInstance = await selector.wallet('bitte-wallet');
-      const callbackUrl = Platform.OS === 'web' ? `${window.location.origin}/wallet-callback` : 'onsocial://wallet-callback';
       await walletInstance.signIn({
         contractId: 'social.near',
         methodNames: [],
         accounts: [],
-        // @ts-ignore: Ignore the TypeScript error for callbackUrl
-        callbackUrl,
       });
-      setWallet(walletInstance);
+
+      dispatch(setWallet(walletInstance));
       const accounts = await walletInstance.getAccounts();
-      setAccountId(accounts[0]?.accountId || null);
-      console.log('Wallet connected:', accounts[0]?.accountId);
+      dispatch(setAccountId(accounts[0]?.accountId || null));
+      router.replace('/home');
+    } catch (error) {
+      console.error('Failed to connect wallet:', error);
+    } finally {
       setIsConnecting(false);
-      // Redirect handled by wallet-callback.tsx
-    } catch (error: any) {
-      console.error('Wallet connection failed:', error);
-      setIsConnecting(false);
-      throw error; // Let caller handle error
     }
   };
 
   const disconnectWallet = async () => {
-    if (!wallet || !selector || isDisconnecting) return;
-    setIsDisconnecting(true);
-    try {
+    if (wallet && selector) {
       await wallet.signOut();
-      setWallet(null);
-      setAccountId(null);
-      setIsDisconnecting(false);
+      dispatch(setWallet(null));
+      dispatch(setAccountId(null));
       router.replace('/');
-      console.log('Wallet disconnected and redirected to /');
-    } catch (error: any) {
-      console.error('Disconnect failed:', error);
-      setIsDisconnecting(false);
-      router.replace('/'); // Force redirect
-      throw error;
+    }
+  };
+
+  const handleTransactionDecline = () => {
+    console.log('Transaction declined, going back...');
+    const { originRoute } = getTransactionOrigin();  // Get the route where the transaction was initiated from
+    if (originRoute) {
+      router.replace(originRoute); // Navigate back to the origin route
+    } else {
+      router.replace('/');  // Default fallback if originRoute is null
     }
   };
 
@@ -80,8 +99,8 @@ export function useWallet() {
     wallet,
     accountId,
     isConnecting,
-    isDisconnecting,
     connectWallet,
     disconnectWallet,
+    handleTransactionDecline,  // Added to return
   };
 }

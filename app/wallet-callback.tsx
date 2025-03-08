@@ -1,50 +1,77 @@
+// app/wallet-callback.tsx
 import React, { useEffect, useRef } from 'react';
-import { Text, View } from 'react-native';
+import { Text, View, Platform } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
-import { useWallet } from '@contexts/WalletContext';
-import { useTransaction } from '@contexts/TransactionContext';
+import { useDispatch } from 'react-redux';
+import { setConnectionStatus, setTransactionStatus, setTransactionError } from '@store/slices/walletSlice';
 
 const WalletCallback: React.FC = () => {
   const router = useRouter();
   const params = useLocalSearchParams();
-  const { setAccountId } = useWallet();
-  const { getTransactionOrigin, clearTransactionOrigin } = useTransaction();
+  const dispatch = useDispatch();
   const isMounted = useRef<boolean>(false);
 
   useEffect(() => {
     isMounted.current = true;
 
     const handleCallback = () => {
-      const { account_id, transactionHashes } = params as { account_id?: string; transactionHashes?: string };
-      const { originRoute } = getTransactionOrigin();
+      const { account_id, transactionHashes, error, from } = params as {
+        account_id?: string;
+        transactionHashes?: string;
+        error?: string;
+        from?: string;
+      };
 
       console.log('WalletCallback params:', JSON.stringify(params, null, 2));
+
       if (account_id && isMounted.current) {
         console.log('User signed in with account:', account_id);
-        setAccountId(account_id);
+        dispatch(setConnectionStatus('connected'));
         router.replace('/(tabs)/home');
       } else if (transactionHashes && isMounted.current) {
         console.log('Transaction completed:', transactionHashes);
-        const redirectRoute = originRoute || '/(tabs)/home'; // Default to home if no origin
+        dispatch(setTransactionStatus('success'));
+        const redirectRoute = from === 'tip' ? '/(tabs)/tip' : '/(tabs)/home';
         router.replace(redirectRoute);
-        clearTransactionOrigin();
+      } else if (error && isMounted.current) {
+        console.log('Wallet action declined or failed:', error);
+        if (from === 'index') {
+          dispatch(setConnectionStatus('disconnected'));
+        } else if (from === 'tip') {
+          dispatch(setTransactionStatus('cancelled'));
+          dispatch(setTransactionError(error));
+          router.replace('/(tabs)/tip');
+        } else {
+          router.replace('/(tabs)/home');
+        }
       } else if (isMounted.current) {
-        console.log('No account_id or transactionHashes, redirecting to /');
-        router.replace('/');
+        console.log('No actionable params, assuming cancel');
+        if (from === 'index') {
+          dispatch(setConnectionStatus('disconnected'));
+          router.replace('/');
+        } else if (from === 'tip') {
+          dispatch(setTransactionStatus('cancelled'));
+          dispatch(setTransactionError('User cancelled or timeout'));
+          router.replace('/(tabs)/tip');
+        } else {
+          router.replace('/(tabs)/home');
+        }
       }
     };
 
-    const timer = setTimeout(() => {
-      if (isMounted.current) {
-        handleCallback();
-      }
-    }, 100);
+    if (Platform.OS !== 'web') {
+      handleCallback();
+    } else {
+      const timer = setTimeout(() => {
+        if (isMounted.current) handleCallback();
+      }, 100);
+      return () => clearTimeout(timer);
+    }
 
     return () => {
-      clearTimeout(timer);
       isMounted.current = false;
     };
-  }, [params, router, setAccountId, getTransactionOrigin, clearTransactionOrigin]);
+  }, [params, router, dispatch]);
 
   return (
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>

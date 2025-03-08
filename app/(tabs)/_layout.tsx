@@ -1,17 +1,19 @@
+// app/(tabs)/_layout.tsx
 import { Tabs } from 'expo-router';
 import { useContext, useEffect, useState } from 'react';
-import { useWallet } from '@contexts/WalletContext';
+import { useSelector } from 'react-redux';
 import { ThemeContext } from '@contexts/ThemeContext';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Platform } from 'react-native';
 import { useTransaction } from '@contexts/TransactionContext';
-import { usePathname } from 'expo-router';
+import { usePathname, useRouter } from 'expo-router';
 
 export default function TabLayout() {
-  const { accountId } = useWallet();
+  const { accountId } = useSelector((state: any) => state); // Get wallet state from Redux
   const { theme } = useContext(ThemeContext);
   const { getTransactionOrigin } = useTransaction();
   const pathname = usePathname();
+  const router = useRouter();
   const [transactionStatus, setTransactionStatus] = useState<string>('');
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState<boolean>(false);
@@ -55,9 +57,16 @@ export default function TabLayout() {
     }
   }, [pathname, getTransactionOrigin]);
 
-  // If no accountId, return null (no tabs will show until authenticated)
+  // If no accountId, redirect to index (login screen)
+  useEffect(() => {
+    if (!accountId) {
+      router.replace('/'); // Redirect to index if not connected
+    }
+  }, [accountId, router]);
+
+  // If no accountId, return null to avoid rendering tabs until authenticated
   if (!accountId) {
-    return null; // Redirect should be handled elsewhere (e.g., useEffect in a screen)
+    return null;
   }
 
   return (

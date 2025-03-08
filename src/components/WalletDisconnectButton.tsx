@@ -1,16 +1,21 @@
+// src/components/WalletDisconnectButton.tsx
 import { Alert } from 'react-native';
-import { useWallet } from '@contexts/WalletContext';
 import { useState } from 'react';
 import { Button } from '@components/Button';
+import { walletService } from '@services/wallet';
+import { useDispatch, useSelector } from 'react-redux';
+import { setIsDisconnecting } from '@store/slices/walletSlice';
 
 export default function WalletDisconnectButton() {
-  const { isDisconnecting, disconnectWallet } = useWallet();
+  const { isDisconnecting } = useSelector((state: any) => state); // Get disconnecting state from Redux
+  const dispatch = useDispatch();
   const [isProcessing, setIsProcessing] = useState(false);
 
   const handleDisconnect = async () => {
     try {
       setIsProcessing(true);
-      await disconnectWallet();
+      dispatch(setIsDisconnecting(true));
+      await walletService.disconnect();
     } catch (error: any) {
       Alert.alert(
         'Error',
@@ -18,6 +23,7 @@ export default function WalletDisconnectButton() {
       );
     } finally {
       setIsProcessing(false);
+      dispatch(setIsDisconnecting(false));
     }
   };
 

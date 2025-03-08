@@ -1,33 +1,37 @@
-import React from 'react';
+// app/_layout.tsx
+import React, { useEffect } from 'react';
 import { Slot } from 'expo-router';
-import { ThemeProvider } from '@contexts/ThemeContext';
-import { WalletProvider } from '@contexts/WalletContext';
-import { TransactionProvider } from '@contexts/TransactionContext';
 import { Provider } from 'react-redux';
+import { PersistGate } from 'redux-persist/integration/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { store } from '@store/index';
+import { ThemeProvider } from '@contexts/ThemeContext';
+import { TransactionProvider } from '@contexts/TransactionContext';
+import { store, persistor } from '@store/index';
 import { Buffer } from 'buffer';
+import { walletService } from '@services/wallet';
 
-// Ensure Buffer is available globally for Fast Near
+const queryClient = new QueryClient();
+
 if (typeof window !== 'undefined' && typeof window.Buffer === 'undefined') {
   window.Buffer = Buffer;
 }
 
-// Initialize React Query Client
-const queryClient = new QueryClient();
-
 const RootLayout: React.FC = () => {
+  useEffect(() => {
+    walletService.initialize(); // Restore wallet state on app load
+  }, []);
+
   return (
     <Provider store={store}>
-      <QueryClientProvider client={queryClient}>
-        <ThemeProvider>
-          <WalletProvider>
+      <PersistGate loading={null} persistor={persistor}>
+        <QueryClientProvider client={queryClient}>
+          <ThemeProvider>
             <TransactionProvider>
-              <Slot /> {/* Ensures proper routing */}
+              <Slot />
             </TransactionProvider>
-          </WalletProvider>
-        </ThemeProvider>
-      </QueryClientProvider>
+          </ThemeProvider>
+        </QueryClientProvider>
+      </PersistGate>
     </Provider>
   );
 };

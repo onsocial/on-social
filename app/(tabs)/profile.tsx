@@ -1,11 +1,12 @@
+// app/(tabs)/profile.tsx
 import { useEffect, useContext } from 'react';
 import { Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
-import { useWallet } from '@contexts/WalletContext';
+import { useSelector } from 'react-redux';
 import { ThemeContext } from '@contexts/ThemeContext';
 
 export default function ProfileScreen() {
-  const { accountId } = useWallet();
+  const { accountId } = useSelector((state: any) => state); // Get wallet state from Redux
   const router = useRouter();
   const { theme } = useContext(ThemeContext);
 
