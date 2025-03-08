@@ -10,8 +10,10 @@ import { store, persistor } from '@store/index';
 import { Buffer } from 'buffer';
 import { walletService } from '@services/wallet';
 
+// Initialize React Query Client
 const queryClient = new QueryClient();
 
+// Ensure Buffer is available globally for Fast Near
 if (typeof window !== 'undefined' && typeof window.Buffer === 'undefined') {
   window.Buffer = Buffer;
 }
